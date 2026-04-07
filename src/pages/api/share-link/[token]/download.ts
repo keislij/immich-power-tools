@@ -1,11 +1,9 @@
 import { ENV } from "@/config/environment";
-import { appDb } from "@/db";
-import { apiKeys } from "@/db/schema";
-import { and, eq } from "drizzle-orm";
 import { JsonWebTokenError, verify } from "jsonwebtoken";
 import { NextApiResponse } from "next";
 
 import { NextApiRequest } from "next";
+import { getUserHeaders } from "@/helpers/user.helper";
 
 interface ShareLinkFilters {
   personIds: string[];
@@ -25,20 +23,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(405).json({ message: "Method not allowed" });
     }
 
-    const decoded = verify(token as string, ENV.JWT_SECRET) as { userId: string };
+    const decoded = verify(token as string, ENV.JWT_SECRET);
 
     if (!decoded) {
       return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    const [keyRow] = await appDb
-      .select({ secret: apiKeys.secret })
-      .from(apiKeys)
-      .where(and(eq(apiKeys.userId, decoded.userId), eq(apiKeys.purpose, "share")))
-      .limit(1);
-
-    if (!keyRow) {
-      return res.status(403).json({ message: "Share key not configured. Please set up sharing in Power Tools." });
     }
 
     const targetUrl = `${ENV.IMMICH_URL}/api/download/archive`;
@@ -46,10 +34,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch(targetUrl, {
       method: 'POST',
       body: JSON.stringify({ assetIds }),
-      headers: {
+      headers: getUserHeaders({ isUsingShareKey: true }, {
         'Content-Type': 'application/json',
-        'x-api-key': keyRow.secret,
-      },
+      }),
     })
 
     if (!response.ok) {

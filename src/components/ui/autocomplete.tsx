@@ -45,7 +45,7 @@ const Autocomplete = React.forwardRef<HTMLInputElement, AutocompleteProps>(
     const [selectedIndex, setSelectedIndex] = React.useState(-1)
     const containerRef = React.useRef<HTMLDivElement>(null)
     const inputRef = React.useRef<HTMLInputElement>(null)
-    const debounceTimeout = React.useRef<NodeJS.Timeout>(undefined)
+    const debounceTimeout = React.useRef<NodeJS.Timeout>()
 
     // Find the label for the current value
     const currentLabel = React.useMemo(() => {

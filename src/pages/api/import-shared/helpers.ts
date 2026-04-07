@@ -26,10 +26,7 @@ export const ensurePowerToolsTag = async (headers: HeadersRecord) => {
 
   const createResponse = await fetch(`${ENV.IMMICH_URL}/api/tags`, {
     method: "POST",
-    headers: {
-      ...headers,
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify({ name: POWER_TOOLS_TAG_NAME }),
   });
 

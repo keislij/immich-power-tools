@@ -5,16 +5,9 @@ import 'leaflet.heat';
 import { getAssetGeoHeatmap, IHeatMapParams } from '@/handlers/api/asset.handler';
 import { Loader2 } from 'lucide-react';
 
-// Fix default marker icons for bundlers that don't support ~ aliases
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-L.Icon.Default.mergeOptions({
-  iconUrl: markerIcon.src,
-  iconRetinaUrl: markerIcon2x.src,
-  shadowUrl: markerShadow.src,
-});
+// Fix for default markers in Leaflet
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
+import 'leaflet-defaulticon-compatibility';
 
 interface LeafletHeatMapProps {
   filters: IHeatMapParams;
