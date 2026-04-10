@@ -6,6 +6,7 @@ import { assetFaces, assets, exif, person } from "@/schema";
 import { and } from "drizzle-orm";
 import { JsonWebTokenError, sign, verify } from "jsonwebtoken";
 import { NextApiResponse } from "next";
+import { normalizePersonName } from "@/helpers/person.helper";
 
 import { NextApiRequest } from "next";
 import { albums } from "@/schema/albums.schema";
@@ -65,6 +66,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const cleanedPeople = dbPeople.map((person) => {
       return {
         ...person,
+        name: normalizePersonName(person.name),
         thumbnailPath: person.thumbnailAssetId ? ASSET_SHARE_THUMBNAIL_PATH({ id: person.id, size: "thumbnail", token: newPreviewToken, isPeople: true }) : null
       }
     })

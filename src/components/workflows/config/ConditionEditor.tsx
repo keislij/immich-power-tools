@@ -6,6 +6,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { ICondition, ConditionType } from "@/types/workflow";
 import { Plus, X, Check } from "lucide-react";
 import { listPeople } from "@/handlers/api/people.handler";
+import { getPersonDisplayName } from "@/helpers/person.helper";
 import { IPerson } from "@/types/person";
 import { PERSON_THUBNAIL_PATH } from "@/config/routes";
 import { useEffect, useState } from "react";
@@ -60,10 +61,12 @@ function PersonPicker({ selectedIds, onChange }: PersonPickerProps) {
     let nextNames: string[];
     if (selectedSet.has(person.id)) {
       nextIds = selectedIds.filter((id) => id !== person.id);
-      nextNames = selectedPeople.filter((p) => p.id !== person.id).map((p) => p.name);
+      nextNames = selectedPeople
+        .filter((p) => p.id !== person.id)
+        .map((p) => getPersonDisplayName(p));
     } else {
       nextIds = [...selectedIds, person.id];
-      nextNames = [...selectedPeople.map((p) => p.name), person.name];
+      nextNames = [...selectedPeople.map((p) => getPersonDisplayName(p)), getPersonDisplayName(person)];
     }
     onChange(nextIds, nextNames);
   };
@@ -81,7 +84,7 @@ function PersonPicker({ selectedIds, onChange }: PersonPickerProps) {
               className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-muted hover:bg-destructive/10 transition-colors group"
             >
               <img src={PERSON_THUBNAIL_PATH(p.id)} alt="" className="h-4 w-4 rounded-full object-cover" />
-              <span className="text-[10px] font-medium">{p.name || "Unknown"}</span>
+              <span className="text-[10px] font-medium">{getPersonDisplayName(p)}</span>
               <X className="h-2.5 w-2.5 text-muted-foreground group-hover:text-destructive" />
             </button>
           ))}
@@ -106,12 +109,12 @@ function PersonPicker({ selectedIds, onChange }: PersonPickerProps) {
                 {people.map((person) => (
                   <CommandItem
                     key={person.id}
-                    value={person.name || person.id}
+                    value={getPersonDisplayName(person, person.id)}
                     onSelect={() => togglePerson(person)}
                     className="flex items-center gap-2"
                   >
                     <img src={PERSON_THUBNAIL_PATH(person.id)} alt="" className="h-6 w-6 rounded-full object-cover" />
-                    <span className="text-xs truncate flex-1">{person.name || "Unknown"}</span>
+                    <span className="text-xs truncate flex-1">{getPersonDisplayName(person)}</span>
                     <Check className={cn("h-3 w-3", selectedSet.has(person.id) ? "opacity-100" : "opacity-0")} />
                   </CommandItem>
                 ))}

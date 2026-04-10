@@ -17,6 +17,7 @@ import { Input } from '@/components/ui/input'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { CheckIcon } from '@radix-ui/react-icons'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
+import { getPersonDisplayName, normalizePersonName } from '@/helpers/person.helper'
 
 interface AlbumPeopleProps {
   album: IAlbum
@@ -47,7 +48,8 @@ const AlbumPeople = React.forwardRef<IAlbumPeopleRef, AlbumPeopleProps>(({ album
   }, [people, query.faceId])
 
   const filteredPeople = useMemo(() => {
-    return people.filter((person) => person.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    const normalizedQuery = searchQuery.trim().toLowerCase()
+    return people.filter((person) => normalizePersonName(person.name).toLowerCase().includes(normalizedQuery))
   }, [people, searchQuery])
 
   const { knownPeople, unknownPeople } = useMemo(() => {
@@ -163,9 +165,9 @@ const AlbumPeople = React.forwardRef<IAlbumPeopleRef, AlbumPeopleProps>(({ album
           cn("cursor-pointer h-10 w-10 min-w-10 rounded-full",
           )
         }
-        src={PERSON_THUBNAIL_PATH(person.id)} alt={person.name} />
+        src={PERSON_THUBNAIL_PATH(person.id)} alt={getPersonDisplayName(person)} />
       <div className='flex flex-col'>
-        <p className='text-sm'>{person.name || "No Name"}</p>
+        <p className='text-sm'>{getPersonDisplayName(person, "No Name")}</p>
         <p className={
           cn("text-xs text-gray-500 dark:text-gray-400")
         }>{person.numberOfPhotos} photos</p>
@@ -212,7 +214,7 @@ const AlbumPeople = React.forwardRef<IAlbumPeopleRef, AlbumPeopleProps>(({ album
 
             <Link target="_blank" href={`${exImmichUrl}/people/${selectedPerson.id}`}
               className="text-sm font-medium">
-              {selectedPerson.name || "No Name"}
+              {getPersonDisplayName(selectedPerson, "No Name")}
             </Link>
           </div>
           {!readOnly && (

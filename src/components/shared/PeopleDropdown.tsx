@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { IPerson } from '@/types/person';
 import { IPersonListFilters, listPeople } from '@/handlers/api/people.handler';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getPersonDisplayName } from '@/helpers/person.helper';
 
 interface IPeopleDropdownProps {
   peopleIds?: string[];
@@ -54,7 +55,7 @@ export default function PeopleDropdown({ peopleIds, onChange }: IPeopleDropdownP
         </SelectTrigger>
         <SelectContent >
           {people.map((person) => (
-            <SelectItem key={person.id} value={person.id}>{person.name}</SelectItem>
+            <SelectItem key={person.id} value={person.id}>{getPersonDisplayName(person)}</SelectItem>
           ))}
         </SelectContent>
       </Select>

@@ -9,6 +9,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const targetUrl = `${ENV.IMMICH_URL}/api${proxyPath}`;
 
   const currentUser = await getCurrentUser(req);
+  if (!currentUser) {
+    return res.status(403).json({ message: "Forbidden" });
+  }
   try {
     const response = await fetch(targetUrl, {
       method: req.method,

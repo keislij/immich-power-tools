@@ -3,6 +3,7 @@ import { IPerson } from '@/types/person';
 import { cn } from '@/lib/utils';
 import LazyImage from '../ui/lazy-image';
 import { Input } from '../ui/input';
+import { getPersonDisplayName, normalizePersonName } from '@/helpers/person.helper';
 
 interface PeopleListProps {
   people: IPerson[];
@@ -14,7 +15,8 @@ export default function PeopleList({ people, onSelect, selectedIds }: PeopleList
   const [searchQuery, setSearchQuery] = useState<string>("")
 
   const filteredPeople = useMemo(() => {
-    return people.filter((person) => person.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    return people.filter((person) => normalizePersonName(person.name).toLowerCase().includes(normalizedQuery))
   }, [people, searchQuery])
 
   const isSelected = useCallback((person: IPerson) => {
@@ -42,12 +44,12 @@ export default function PeopleList({ people, onSelect, selectedIds }: PeopleList
             role="button"
             className={
               cn("cursor-pointer h-10 w-10 min-w-10 rounded-full border-2",
-                !!person.name ? "border-green-500" : "border-gray-500",
+                !!normalizePersonName(person.name) ? "border-green-500" : "border-gray-500",
               )
             }
-            src={person.thumbnailPath} alt={person.name} />
+            src={person.thumbnailPath} alt={getPersonDisplayName(person)} />
           <div className='flex flex-col text-sm'>
-            <p>{person.name || "No Name"}</p>
+            <p>{getPersonDisplayName(person, "No Name")}</p>
             <p className={
               cn("text-xs text-gray-500 dark:text-gray-400")
             }>{person.assetCount} photos</p>

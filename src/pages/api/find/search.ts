@@ -4,6 +4,7 @@ import { ASSET_VIDEO_PATH } from "@/config/routes";
 import { getCurrentUser } from "@/handlers/serverUtils/user.utils";
 import { cleanUpAsset, isFlipped } from "@/helpers/asset.helper";
 import { parseFindQuery } from "@/helpers/ai.helper";
+import { getPersonDisplayName } from "@/helpers/person.helper";
 import { person } from "@/schema";
 import { Person } from "@/schema/person.schema";
 import { inArray } from "drizzle-orm";
@@ -16,6 +17,9 @@ export default async function search(
   try {
     const { query } = req.body;
     const currentUser = await getCurrentUser(req);
+    if (!currentUser) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
     const parsedQuery = await parseFindQuery(query as string);
     const { personIds } = parsedQuery;
 
@@ -68,7 +72,7 @@ export default async function search(
           assets: items,
           filters: {
             ...parsedQuery,
-            personIds: dbPeople.map((person) => person.name),
+            personIds: dbPeople.map((person) => getPersonDisplayName(person)),
           },
         });
       })

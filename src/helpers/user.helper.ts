@@ -4,7 +4,7 @@ import { IUser } from "@/types/user"
 export const getUserHeaders = (user: {
   isUsingAPIKey?: boolean,
   accessToken?: string
-}, otherHeaders?: {
+} | null | undefined, otherHeaders?: {
   'Content-Type': string
 }) => {
   let headers: {
@@ -14,9 +14,9 @@ export const getUserHeaders = (user: {
   } = {
     'Content-Type': 'application/json',
   }
-  if (user.isUsingAPIKey) {
+  if (user?.isUsingAPIKey && ENV.IMMICH_API_KEY) {
     headers['x-api-key'] = ENV.IMMICH_API_KEY
-  } else {
+  } else if (user?.accessToken) {
     headers['Authorization'] = `Bearer ${user.accessToken}`
   }
   

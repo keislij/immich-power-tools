@@ -4,6 +4,7 @@ import { Autocomplete, AutocompleteOption } from '@/components/ui/autocomplete'
 import { useToast } from '@/components/ui/use-toast'
 import { PERSON_THUBNAIL_PATH } from '@/config/routes'
 import { mergePerson, searchPeople, updatePerson } from '@/handlers/api/people.handler'
+import { getPersonDisplayName, normalizePersonName } from '@/helpers/person.helper'
 import { IAlbumPerson } from '@/types/album'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -17,7 +18,7 @@ interface AlbumPersonNameBarProps {
 
 export default function AlbumPersonNameBar({ selectedPerson, faceId, onUpdate, onMerge }: AlbumPersonNameBarProps) {
 
-  const [newName, setNewName] = useState(selectedPerson?.name)
+  const [newName, setNewName] = useState(normalizePersonName(selectedPerson?.name))
   const [loading, setLoading] = useState(false)
   const mergeDialogRef = useRef<IAlertDialogActions>(null);
   const selectedPersonRef = useRef<AutocompleteOption | null>(null);
@@ -74,7 +75,7 @@ export default function AlbumPersonNameBar({ selectedPerson, faceId, onUpdate, o
           <Autocomplete
             position="bottom"
             loadOptions={(query: string) => searchPeople(query).then((people) => people.map((person: any) => ({
-              label: person.name, value: person.id,
+              label: getPersonDisplayName(person), value: person.id,
               imageUrl: person.thumbnailPath
             })))}
             type="text"

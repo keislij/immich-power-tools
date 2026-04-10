@@ -3,6 +3,7 @@ import inputStyle from './findInputStyle'
 import { MentionsInput, Mention } from 'react-mentions'
 import { searchPeople } from '@/handlers/api/people.handler';
 import mentionStyle from './findMentionStyle';
+import { getPersonDisplayName } from '@/helpers/person.helper';
 
 interface FindInputProps {
   onSearch: (query: string) => void;
@@ -16,7 +17,7 @@ export default function FindInput({ onSearch, value, onChange }: FindInputProps)
     if (!e.length) return [];
     return searchPeople(e).then((people) => people.map((person: any) => ({
       id: person.id,
-      display: person.name,
+      display: getPersonDisplayName(person),
     }))).then((people) => callback(people));
   }
 

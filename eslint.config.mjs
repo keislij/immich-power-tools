@@ -1,6 +1,5 @@
 import { defineConfig } from "eslint/config";
-import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
-import remotion from "@remotion/eslint-plugin";
+import nextCoreWebVitals from "eslint-config-next/core-web-vitals.js";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
@@ -15,11 +14,9 @@ const compat = new FlatCompat({
 });
 
 export default defineConfig([{
-    extends: [...nextCoreWebVitals],
-
-    plugins: {
-        "@remotion": remotion,
-    },
+    ignores: [".next/**", "node_modules/**", "dist/**", "out/**"],
+}, {
+    extends: [...compat.extends(...nextCoreWebVitals.extends)],
 
     rules: {
         "react-hooks/exhaustive-deps": "off",

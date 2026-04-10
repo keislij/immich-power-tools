@@ -2,6 +2,7 @@ import { NextApiRequest } from "next";
 
 import { db } from "@/config/db";
 import { getCurrentUser } from "@/handlers/serverUtils/user.utils";
+import { normalizePersonName } from "@/helpers/person.helper";
 import { NextApiResponse } from "next";
 import { albums } from "@/schema/albums.schema";
 import { count, desc, eq, and, isNotNull } from "drizzle-orm";
@@ -34,5 +35,10 @@ export default async function handler(
     .orderBy(desc(person.name))
     .groupBy(person.id);  
 
-  res.status(200).json(dbAlbumPeople);
+  res.status(200).json(
+    dbAlbumPeople.map((albumPerson) => ({
+      ...albumPerson,
+      name: normalizePersonName(albumPerson.name),
+    }))
+  );
 }

@@ -30,6 +30,9 @@ export default async function handler(
     } = req.query as any as IQuery;
 
     const currentUser = await getCurrentUser(req);
+    if (!currentUser) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
     const personRecords = await db
       .select()
       .from(person)
