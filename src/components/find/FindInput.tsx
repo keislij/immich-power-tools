@@ -11,6 +11,8 @@ interface FindInputProps {
   onChange: (value: string) => void;
 }
 
+const MENTION_MARKUP = '@[__display__](__id__)';
+
 export default function FindInput({ onSearch, value, onChange }: FindInputProps) {
 
   const handleSearchPeople = async (e: any, callback: any) => {
@@ -36,13 +38,18 @@ export default function FindInput({ onSearch, value, onChange }: FindInputProps)
       <Mention
         trigger="@"
         style={mentionStyle}
+        markup={MENTION_MARKUP}
+        displayTransform={(id, display) => display || id}
         data={handleSearchPeople}
         renderSuggestion={(
+          suggestion,
+          _search,
           highlightedDisplay,
+          _index,
           focused
         ) => (
           <div className={`user ${focused ? 'focused' : ''} `}>
-            {highlightedDisplay.display}
+            {highlightedDisplay || suggestion.display}
           </div>
         )}
       />
