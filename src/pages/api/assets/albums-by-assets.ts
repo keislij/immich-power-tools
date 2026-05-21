@@ -5,6 +5,14 @@ import { albums } from "@/schema/albums.schema";
 import { albumsAssetsAssets } from "@/schema/albumAssetsAssets.schema";
 import { eq, inArray, and } from "drizzle-orm";
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "10mb",
+    },
+  },
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
